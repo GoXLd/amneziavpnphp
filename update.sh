@@ -123,15 +123,8 @@ if [ -z "$MIGRATIONS" ]; then
     echo -e "${YELLOW}⚠ No migration files found${NC}"
 else
     # Create migrations tracking table if not exists
-    $DOCKER_COMPOSE exec -T db mysql -uroot -p$DB_ROOT_PASS amnezia_panel <<EOF 2>/dev/null || \
-    $DOCKER_COMPOSE exec db mysql -uroot -p$DB_ROOT_PASS amnezia_panel <<EOF 2>/dev/null
-CREATE TABLE IF NOT EXISTS schema_migrations (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    filename VARCHAR(255) UNIQUE NOT NULL,
-    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_filename (filename)
-);
-EOF
+    $DOCKER_COMPOSE exec -T db mysql -uroot -p$DB_ROOT_PASS amnezia_panel -e "CREATE TABLE IF NOT EXISTS schema_migrations (id INT PRIMARY KEY AUTO_INCREMENT, filename VARCHAR(255) UNIQUE NOT NULL, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, INDEX idx_filename (filename));" 2>/dev/null || \
+    $DOCKER_COMPOSE exec db mysql -uroot -p$DB_ROOT_PASS amnezia_panel -e "CREATE TABLE IF NOT EXISTS schema_migrations (id INT PRIMARY KEY AUTO_INCREMENT, filename VARCHAR(255) UNIQUE NOT NULL, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, INDEX idx_filename (filename));" 2>/dev/null
     
     # Apply each migration
     APPLIED_COUNT=0
