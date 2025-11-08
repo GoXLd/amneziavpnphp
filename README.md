@@ -27,8 +27,16 @@ Web-based management panel for Amnezia AWG (WireGuard) VPN servers.
 git clone https://github.com/infosave2007/amneziavpnphp.git
 cd amneziavpnphp
 cp .env.example .env
+
+# For Docker Compose V2 (recommended)
 docker compose up -d
 docker compose exec web composer install
+docker compose exec -d web php bin/collect_metrics.php
+
+# Or for older Docker Compose V1
+docker-compose up -d
+docker-compose exec web composer install
+docker-compose exec -d web php bin/collect_metrics.php
 ```
 
 Access: http://localhost:8082
