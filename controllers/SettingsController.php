@@ -301,15 +301,15 @@ class SettingsController {
         $stmt = $this->pdo->query("SELECT * FROM languages ORDER BY code");
         $languages = $stmt->fetchAll();
         
-        // Get total translation keys count
-        $stmt = $this->pdo->query("SELECT COUNT(DISTINCT translation_key) as count FROM translations WHERE language_code = 'en'");
+        // Get total translation keys count (distinct category + key_name combinations)
+        $stmt = $this->pdo->query("SELECT COUNT(DISTINCT CONCAT(category, '.', key_name)) as count FROM translations WHERE locale = 'en'");
         $totalKeys = $stmt->fetch();
         $totalCount = $totalKeys['count'];
         
         $stats = [];
         foreach ($languages as $lang) {
             $stmt = $this->pdo->prepare(
-                "SELECT COUNT(*) as count FROM translations WHERE language_code = ? AND translation_value IS NOT NULL AND translation_value != ''"
+                "SELECT COUNT(*) as count FROM translations WHERE locale = ? AND translation IS NOT NULL AND translation != ''"
             );
             $stmt->execute([$lang['code']]);
             $translated = $stmt->fetch();
