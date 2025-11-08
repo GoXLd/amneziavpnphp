@@ -28,7 +28,10 @@ fi
 
 # Load DB credentials from .env
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    # Source .env file safely
+    set -a
+    source .env
+    set +a
     DB_USER=${DB_USERNAME:-amnezia}
     DB_PASS=${DB_PASSWORD:-amnezia}
     DB_ROOT_PASS=${DB_ROOT_PASSWORD:-rootpassword}
