@@ -280,17 +280,8 @@ async function updateTrafficLimit(event, clientId) {
     
     if (data.success !== false) {
       alert('Traffic limit updated successfully');
-      // Update current value display (keep usage info if available)
-      const currentDiv = document.getElementById('currentTrafficLimit');
-      const usageMatch = currentDiv.textContent.match(/used: ([\d.]+) GB/);
-      if (usageMatch && limitBytes !== null) {
-        displayText += ` (used: ${usageMatch[1]} GB)`;
-      }
-      currentDiv.textContent = displayText;
-      // Reset form
-      select.value = '';
-      customInput.value = '';
-      customInput.style.display = 'none';
+      // Reload page to show updated traffic info
+      window.location.reload();
     } else {
       alert('Error: ' + (data.error || 'Unknown error'));
     }

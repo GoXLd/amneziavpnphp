@@ -133,15 +133,15 @@
           </td>
           <td class="px-6 py-4 text-sm">
             <div class="text-gray-600">
-              ↑ {{ (client.traffic_sent|default(0) / 1024 / 1024)|number_format(2) }} MB
+              ↑ {{ (client.bytes_sent|default(0) / 1024 / 1024)|number_format(2) }} MB
             </div>
             <div class="text-gray-600">
-              ↓ {{ (client.traffic_received|default(0) / 1024 / 1024)|number_format(2) }} MB
+              ↓ {{ (client.bytes_received|default(0) / 1024 / 1024)|number_format(2) }} MB
             </div>
           </td>
           <td class="px-6 py-4 text-sm">
             {% if client.traffic_limit %}
-              {% set total_traffic = (client.traffic_sent|default(0) + client.traffic_received|default(0)) %}
+              {% set total_traffic = (client.bytes_sent|default(0) + client.bytes_received|default(0)) %}
               {% set limit_gb = (client.traffic_limit / 1073741824)|number_format(2) %}
               {% set used_gb = (total_traffic / 1073741824)|number_format(2) %}
               {% set percentage = ((total_traffic / client.traffic_limit) * 100)|round %}
