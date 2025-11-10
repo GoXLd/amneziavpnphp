@@ -669,10 +669,24 @@ if [ -n "$METRICS_PID" ]; then
     if $DOCKER_COMPOSE exec -T web ps -p "$METRICS_PID" &>/dev/null; then
         log_success "Metrics collector is running (PID: $METRICS_PID)"
     else
-        log_warning "Metrics collector PID file exists but process not found, will restart via cron"
+        log_warning "Metrics collector PID file exists but process not found, starting..."
+        $DOCKER_COMPOSE exec -d web /bin/bash /var/www/html/bin/monitor_metrics.sh
+        sleep 3
+        NEW_PID=$($DOCKER_COMPOSE exec -T web cat /var/run/collect_metrics.pid 2>/dev/null || echo "")
+        if [ -n "$NEW_PID" ]; then
+            log_success "Metrics collector started (PID: $NEW_PID)"
+        fi
     fi
 else
-    log_warning "Metrics collector not running, will be started by cron within 3 minutes"
+    log_warning "Metrics collector not running, starting now..."
+    $DOCKER_COMPOSE exec -d web /bin/bash /var/www/html/bin/monitor_metrics.sh
+    sleep 3
+    NEW_PID=$($DOCKER_COMPOSE exec -T web cat /var/run/collect_metrics.pid 2>/dev/null || echo "")
+    if [ -n "$NEW_PID" ]; then
+        log_success "Metrics collector started (PID: $NEW_PID)"
+    else
+        log_warning "Failed to start metrics collector. Check: docker-compose exec web tail /var/log/metrics_monitor.log"
+    fi
 fi
 
 # ==========================================
