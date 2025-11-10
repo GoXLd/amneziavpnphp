@@ -120,8 +120,9 @@ class VpnClient {
         
         $escaped = escapeshellarg($cmd);
         $sshCmd = sprintf(
-            "sshpass -p '%s' ssh -q -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no %s@%s %s 2>&1",
+            "sshpass -p '%s' ssh -p %d -q -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no %s@%s %s 2>&1",
             $serverData['password'],
+            $serverData['port'],
             $serverData['username'],
             $serverData['host'],
             $escaped
@@ -282,8 +283,9 @@ class VpnClient {
         
         $escapedCommand = escapeshellarg($command);
         $sshCommand = sprintf(
-            "sshpass -p '%s' ssh -q -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no %s@%s %s 2>&1",
+            "sshpass -p '%s' ssh  -p %d -q -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no %s@%s %s 2>&1",
             $serverData['password'],
+            $serverData['port'],
             $serverData['username'],
             $serverData['host'],
             $escapedCommand

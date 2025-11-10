@@ -153,8 +153,9 @@ class VpnServer {
      */
     private function testConnection(): bool {
         $testCommand = sprintf(
-            "sshpass -p '%s' ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ConnectTimeout=10 %s@%s 'echo test' 2>/dev/null",
+            "sshpass -p '%s' ssh -p %d -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ConnectTimeout=10 %s@%s 'echo test' 2>/dev/null",
             $this->data['password'],
+            $this->data['port'],
             $this->data['username'],
             $this->data['host']
         );
@@ -173,8 +174,9 @@ class VpnServer {
         
         $escapedCommand = escapeshellarg($command);
         $sshCommand = sprintf(
-            "sshpass -p '%s' ssh -q -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no %s@%s %s 2>&1",
+            "sshpass -p '%s' ssh -p %d -q -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no %s@%s %s 2>&1",
             $this->data['password'],
+            $this->data['port'],
             $this->data['username'],
             $this->data['host'],
             $escapedCommand
