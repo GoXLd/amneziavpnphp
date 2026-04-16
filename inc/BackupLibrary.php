@@ -307,7 +307,15 @@ class BackupParser {
      * Parse backup produced by the Amnezia mobile/desktop application (.backup files).
      */
     private static function parseAmneziaBackup(array $decoded): array {
-        $serversRaw = json_decode($decoded['Servers/serversList'] ?? '[]', true);
+        $serversList = $decoded['Servers/serversList'] ?? [];
+        if (is_string($serversList)) {
+            $serversRaw = json_decode($serversList, true);
+        } elseif (is_array($serversList)) {
+            $serversRaw = $serversList;
+        } else {
+            $serversRaw = null;
+        }
+
         if (!is_array($serversRaw)) {
             throw new Exception('Invalid Amnezia backup payload');
         }
@@ -316,7 +324,11 @@ class BackupParser {
         foreach ($serversRaw as $serverIndex => $serverEntry) {
             $containers = $serverEntry['containers'] ?? [];
             foreach ($containers as $container) {
-                if (($container['container'] ?? '') !== 'amnezia-awg') {
+                $containerName = (string)($container['container'] ?? '');
+                $hasAwgPayload = isset($container['awg']) && is_array($container['awg']);
+                $isAwgContainer = str_starts_with($containerName, 'amnezia-awg');
+
+                if (!$hasAwgPayload && !$isAwgContainer) {
                     continue;
                 }
 
